@@ -1,4 +1,6 @@
+from tkinter import Image
 
+from AnilistPython import Anilist
 from pprint import pprint
 import requests
 import os
@@ -31,7 +33,11 @@ def main():
 
 
 def getAnime():
-    print('hello')
+    font=Figlet(font='contessa')
+    print(font.renderText('Welcome to Anime Search'))
+    anilist=Anilist()
+    anime=input('Type the show of the anime that you want\n')
+    anilist.print_anime_info(anime)
 
 
 
@@ -50,46 +56,46 @@ def function_2():
                      .format(urllib.parse.quote_plus(f"{url}"))
                      ).json()
                 aniList=response['result'][0]['anilist']
-                print(aniList)
                 anime_link=f'https://anilist.co/anime/{aniList}'
-                getAnimeInner(aniList)
+
+                print(f'The anime from this image is ',end="")
+                anime_name=getAnimeInner(aniList)
                 print('This is the anime link '+anime_link)
                 break
             else:
                 continue
     elif choice=='jpeg' or choice=='jpg':
-        print('work in progress')
+        file_name=input('Please input the file name')
+        file_name=file_name.lstrip().rstrip().lower()
+        file_type=['.jpeg','.jpg']
+        while True:
+            if file_name in file_type:
+                im=Image.open(file_name)
+                response = requests.get("https://api.trace.moe/search?url={}"
+                                        .format(urllib.parse.quote_plus(f"{im}"))
+                                        ).json()
+                aniList = response['result'][0]['anilist']
+                anime_link = f'https://anilist.co/anime/{aniList}'
+
+                print(f'The anime from this image is ', end="")
+                anime_name = getAnimeInner(aniList)
+                print('This is the anime link ' + anime_link)
+                break
+            else:
+                continue
+
+
+
     else:
         print('Incorrect Type has been used')
 
 
 
 def getAnimeInner(ani_id):
-    query = '''
-    query ($id: Int) { # Define which variables will be used in the query (id)
-      Media (id: $id, type: ANIME) { # Insert our variables into the query arguments (id) (type: ANIME is hard-coded in the query)
-        id
-        title {
-          romaji
-          english
-          native
-        }
-      }
-    }
-    '''
 
-    # Define our query variables and values that will be used in the query request
-    variables = {
-        'id': ani_id
-    }
-
-    url = 'https://graphql.anilist.co'
-
-    # Make the HTTP Api request
-    response = requests.post(url, json={'query': query, 'variables': variables})
-    name=response['data'][0]['title']['romaji']
-    print(name)
-
-
+    anilist = Anilist()
+    anime_dict = anilist.get_anime_with_id(ani_id)
+    anime_name = anime_dict['name_english']
+    print(anime_name)
 if __name__ == "__main__":
     main()
