@@ -44,11 +44,8 @@ def getAnime():
 def function_2():
     font2=Figlet(font='doom')
     print(font2.renderText('Welcome to Anime Images'))
-    print("You can use this function to reverse Image search a scene of an anime through the use of JPEG or the use of URL")
-    print('Choose URL or JPEG to start')
-    choice=input().lstrip().rstrip().lower()
-    if choice=='url':
-        while True:
+    print("You can use this function to reverse Image search a scene of an anime through the use of URL")
+    while True:
             url=input('Please input the url')
             url.lstrip().rstrip().lower()
             if url.startswith('https'):
@@ -64,30 +61,9 @@ def function_2():
                 break
             else:
                 continue
-    elif choice=='jpeg' or choice=='jpg':
-        file_name=input('Please input the file name')
-        file_name=file_name.lstrip().rstrip().lower()
-        file_type=['.jpeg','.jpg']
-        while True:
-            if file_name in file_type:
-                im=Image.open(file_name)
-                response = requests.get("https://api.trace.moe/search?url={}"
-                                        .format(urllib.parse.quote_plus(f"{im}"))
-                                        ).json()
-                aniList = response['result'][0]['anilist']
-                anime_link = f'https://anilist.co/anime/{aniList}'
-
-                print(f'The anime from this image is ', end="")
-                anime_name = getAnimeInner(aniList)
-                print('This is the anime link ' + anime_link)
-                break
-            else:
-                continue
 
 
 
-    else:
-        print('Incorrect Type has been used')
 
 
 
